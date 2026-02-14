@@ -1,46 +1,35 @@
-import { useState } from 'react';
-import AddExpense from './AddExpense'; // This imports the file you just made
+import { useState, useEffect } from 'react'; // 1. Added useEffect here
+import AddExpense from './AddExpense';
 
 function App() {
-  // This 'state' will hold your list of expenses
+  // 2. Initialize state by checking LocalStorage first
   const [expenses, setExpenses] = useState(() => {
-  const saved = localStorage.getItem("expenses");
-  return saved ? JSON.parse(saved) : [];
-});
+    const savedData = localStorage.getItem('my_expenses');
+    return savedData ? JSON.parse(savedData) : [];
+  });
 
-// Add this "useEffect" right after your addExpense function
-import { useEffect } from 'react';
-// ... inside the App function ...
-useEffect(() => {
-  localStorage.setItem("expenses", JSON.stringify(expenses));
-}, [expenses]);
+  // 3. This "Effect" runs every time 'expenses' changes, saving it automatically
+  useEffect(() => {
+    localStorage.setItem('my_expenses', JSON.stringify(expenses));
+  }, [expenses]);
 
-
-  // Function to add a new expense to the list
   const addExpense = (newExpense) => {
     setExpenses([...expenses, newExpense]);
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h1>Budget Tracker</h1>
-      
-      {/* 1. Show the Form */}
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Budget Tracker</h1>
       <AddExpense onAddExpense={addExpense} />
       
-      {/* 2. Show the History List */}
-      <h3>Transaction History</h3>
-      {expenses.length === 0 ? (
-        <p>No transactions yet. Add one above!</p>
-      ) : (
-        <ul>
-          {expenses.map((item) => (
-            <li key={item.id} style={{ marginBottom: '10px' }}>
-              <strong>{item.description}</strong>: ₹{item.amount}
-            </li>
-          ))}
-        </ul>
-      )}
+      <h2>History (Saved)</h2>
+      <ul>
+        {expenses.map((item) => (
+          <li key={item.id}>
+            {item.description}: ₹{item.amount}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
